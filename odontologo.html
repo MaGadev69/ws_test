@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Panel de Odontólogo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .panel {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .panel h2 {
+            margin-top: 0;
+        }
+        button {
+            background-color: #2196F3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #1976D2;
+        }
+        .notification {
+            background-color: #ffeb3b;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #ff9800;
+        }
+        #messages {
+            background-color: #f9f9f9;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Panel de Odontólogo</h1>
+
+        <div class="panel">
+            <h2>Acciones</h2>
+            <button onclick="sendToRecepcion('listo_para_llamar')">Listo para Llamar</button>
+            <button onclick="sendToRecepcion('paciente_atendido')">Paciente Atendido</button>
+            <button id="checkNotificationsBtn" onclick="checkNotifications()" style="background-color: #FF9800;">Verificar Notificaciones</button>
+            <div id="notificationIndicator" style="display: none; background-color: #f44336; color: white; padding: 5px 10px; border-radius: 3px; margin-top: 10px;">
+                ¡Tienes mensajes pendientes!
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Mensajes recibidos:</h2>
+            <div id="messages"></div>
+        </div>
+    </div>
+
+    <script>
+        let wsOdontologo = null;
+        let isDisconnected = true;
+
+        function connectWebSocket() {
+            if (wsOdontologo && wsOdontologo.readyState === WebSocket.OPEN) {
+                return; // Ya está conectado
+            }
+
+            wsOdontologo = new WebSocket('ws://localhost:8000/ws/odontologo');
+            isDisconnected = false;
+
+            wsOdontologo.onopen = function(event) {
+                console.log('Conexión WebSocket para Odontólogo abierta');
+                addMessage('Sistema', 'Conexión establecida', 'system');
+            };
+
+            wsOdontologo.onmessage = function(event) {
+                const messageData = JSON.parse(event.data);
+                addMessage(messageData.type, messageData.message, messageData.from);
+            };
+
+            wsOdontologo.onclose = function(event) {
+                console.log('Conexión WebSocket para Odontólogo cerrada');
+                addMessage('Sistema', 'Conexión cerrada (timeout o error)', 'system');
+                isDisconnected = true;
+            };
+
+            wsOdontologo.onerror = function(event) {
+                console.error('Error en WebSocket:', event);
+                isDisconnected = true;
+            };
+        }
+
+        // Funciones para enviar mensajes
+        function sendToRecepcion(message) {
+            if (wsOdontologo && wsOdontologo.readyState === WebSocket.OPEN) {
+                try {
+                    const messageData = {
+                        type: "notificacion",
+                        message: message,
+                        from: "odontologo",
+                        to: "recepcion"
+                    };
+                    wsOdontologo.send(JSON.stringify(messageData));
+                    addMessage('Yo', message, 'sent');
+                } catch (e) {
+                    addMessage('Sistema', 'Error al enviar, reconectando...', 'error');
+                    connectWebSocket();
+                    // Intentar enviar nuevamente después de la reconexión
+                    setTimeout(() => {
+                        if (wsOdontologo && wsOdontologo.readyState === WebSocket.OPEN) {
+                            const messageData = {
+                                type: "notificacion",
+                                message: message,
+                                from: "odontologo",
+                                to: "recepcion"
+                            };
+                            wsOdontologo.send(JSON.stringify(messageData));
+                            addMessage('Yo', message, 'sent');
+                        } else {
+                            // Si no se puede reconectar inmediatamente, reconectar al enviar
+                            addMessage('Sistema', 'No se pudo conectar, reconexión pendiente...', 'error');
+                            // Intentar reconectar la próxima vez que se envíe un mensaje
+                            isDisconnected = true;
+                        }
+                    }, 100);
+                }
+            } else {
+                addMessage('Sistema', 'No conectado, reconectando...', 'error');
+                connectWebSocket();
+                // Esperar hasta que se establezca la conexión
+                const checkConnection = setInterval(() => {
+                    if (wsOdontologo && wsOdontologo.readyState === WebSocket.OPEN) {
+                        clearInterval(checkConnection);
+                        const messageData = {
+                            type: "notificacion",
+                            message: message,
+                            from: "odontologo",
+                            to: "recepcion"
+                        };
+                        wsOdontologo.send(JSON.stringify(messageData));
+                        addMessage('Yo', message, 'sent');
+                    }
+                }, 50); // Verificar cada 50ms si se conectó
+
+                // Timeout por si acaso
+                setTimeout(() => {
+                    clearInterval(checkConnection);
+                }, 2000); // Máximo 2 segundos esperando
+            }
+        }
+
+        function checkNotifications() {
+            addMessage('Sistema', 'Verificando notificaciones...', 'system');
+            // Ocultar el indicador de notificaciones
+            document.getElementById('notificationIndicator').style.display = 'none';
+            connectWebSocket();
+        }
+
+        function addMessage(type, message, from) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'notification';
+
+            const formattedTime = new Date().toLocaleTimeString();
+            messageDiv.innerHTML = `<strong>${type}:</strong> ${message} - <small>${formattedTime}</small>`;
+
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            // Mostrar el indicador si es un mensaje de recepción y no estamos conectados actualmente
+            if (type === 'notificacion' && from === 'recepcion') {
+                document.getElementById('notificationIndicator').style.display = 'block';
+            }
+        }
+
+        // Mostrar un mensaje de recordatorio al cargar la página
+        window.onload = function() {
+            addMessage('Recordatorio', 'Usa el botón "Verificar Notificaciones" para revisar mensajes pendientes', 'reminder');
+        };
+    </script>
+</body>
+</html>

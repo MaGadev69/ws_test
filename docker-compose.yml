@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  websocket-app:
+    build: .
+    ports:
+      - "8001:8001"
+    restart: unless-stopped
+    environment:
+      - ENVIRONMENT=production
