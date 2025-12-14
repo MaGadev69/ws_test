@@ -1,102 +1,33 @@
-INFO:     10.0.1.4:33630 - "GET /static/js/theme.js HTTP/1.1" 200 OK
-INFO:     10.0.1.4:33632 - "GET /static/css/home.css HTTP/1.1" 200 OK
-INFO:     10.0.1.4:38462 - "GET /registro HTTP/1.1" 200 OK
-INFO:     10.0.1.4:38462 - "GET /static/css/registro.css HTTP/1.1" 200 OK
-INFO:     10.0.1.4:38462 - "GET /static/images/Scan.webp HTTP/1.1" 200 OK
-INFO:     10.0.1.4:38470 - "GET /package_types HTTP/1.1" 200 OK
-INFO:     10.0.1.4:38462 - "GET /locations HTTP/1.1" 200 OK
-INFO:     10.0.1.4:39656 - "POST /process-image HTTP/1.1" 200 OK
-INFO:     10.0.1.4:48698 - "POST /process-image HTTP/1.1" 200 OK
-INFO:     10.0.0.2:54620 - "CONNECT www.cloudflare.com%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:54622 - "CONNECT www.google.com%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:44732 - "CONNECT www.cloudflare.com%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:44748 - "CONNECT www.google.com%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:38640 - "CONNECT www.google.com%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:38626 - "CONNECT www.cloudflare.com%3A443 HTTP/1.1" 404 Not Found
-WARNING:  Invalid HTTP request received.
-WARNING:  Invalid HTTP request received.
-WARNING:  Invalid HTTP request received.
-WARNING:  Invalid HTTP request received.
-WARNING:  Invalid HTTP request received.
-INFO:     10.0.0.2:1687 - "GET / HTTP/1.1" 401 Unauthorized
-WARNING:  Invalid HTTP request received.
-INFO:     10.0.0.2:46080 - "GET / HTTP/1.1" 401 Unauthorized
-INFO:     10.0.0.2:32816 - "GET /favicon.ico HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:49902 - "CONNECT www.cloudflare.com%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:49910 - "CONNECT www.google.com%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:40114 - "CONNECT www.cloudflare.com%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:40120 - "CONNECT www.google.com%3A443 HTTP/1.1" 404 Not Found
-WARNING:  Invalid HTTP request received.
-INFO:     10.0.0.2:46533 - "GET / HTTP/1.1" 401 Unauthorized
-INFO:     10.0.0.2:56412 - "GET / HTTP/1.1" 401 Unauthorized
-WARNING:  Invalid HTTP request received.
-INFO:     10.0.0.2:63170 - "GET / HTTP/1.1" 401 Unauthorized
-INFO:     10.0.0.2:63172 - "PRI %2A HTTP/2.0" 404 Not Found
-WARNING:  Invalid HTTP request received.
-WARNING:  Invalid HTTP request received.
-INFO:     10.0.0.2:3126 - "GET /.well-known/security.txt HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:2684 - "GET / HTTP/1.1" 401 Unauthorized
-WARNING:  Invalid HTTP request received.
-INFO:     10.0.0.2:15646 - "GET / HTTP/1.1" 401 Unauthorized
-INFO:     10.0.0.2:15670 - "PRI %2A HTTP/2.0" 404 Not Found
-WARNING:  Invalid HTTP request received.
-WARNING:  Invalid HTTP request received.
-INFO:     10.0.0.2:15732 - "GET /.well-known/security.txt HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:40416 - "CONNECT www.cloudflare.com%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:40432 - "CONNECT www.google.com%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:65226 - "GET / HTTP/1.1" 401 Unauthorized
-INFO:     10.0.0.2:42860 - "GET /.env HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:42868 - "GET /.git/config HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:50344 - "CONNECT www.cloudflare.com%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:50348 - "CONNECT www.google.com%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:62914 - "GET / HTTP/1.1" 401 Unauthorized
-INFO:     10.0.0.2:48786 - "GET / HTTP/1.1" 401 Unauthorized
-WARNING:  Invalid HTTP request received.
-WARNING:  Invalid HTTP request received.
-INFO:     10.0.0.2:29654 - "GET /login HTTP/1.1" 200 OK
-INFO:     10.0.1.4:43510 - "GET / HTTP/1.1" 307 Temporary Redirect
-INFO:     10.0.1.4:43510 - "GET /login HTTP/1.1" 200 OK
-INFO:     10.0.1.4:43510 - "GET /static/images/step1.webp HTTP/1.1" 200 OK
-INFO:     10.0.1.4:43514 - "GET /static/images/step2.webp HTTP/1.1" 200 OK
-INFO:     10.0.1.4:43534 - "GET /static/css/style.css HTTP/1.1" 200 OK
-INFO:     10.0.1.4:43518 - "GET /static/images/step3.webp HTTP/1.1" 200 OK
-INFO:     10.0.1.4:43546 - "GET /static/css/animations.css HTTP/1.1" 200 OK
-INFO:     10.0.1.4:43554 - "GET /static/icons/whatsapp.svg HTTP/1.1" 200 OK
-INFO:     10.0.1.4:43554 - "GET /static/js/main.js HTTP/1.1" 200 OK
-INFO:     10.0.1.4:43510 - "GET /static/js/three-scene.js HTTP/1.1" 200 OK
-INFO:     10.0.1.4:43546 - "GET /static/js/animations.js HTTP/1.1" 200 OK
-INFO:     10.0.1.4:43510 - "GET /static/videos/step1.mp4 HTTP/1.1" 206 Partial Content
-INFO:     10.0.1.4:43556 - "GET /static/videos/step3.mp4 HTTP/1.1" 206 Partial Content
-INFO:     10.0.1.4:43570 - "GET /static/videos/step2.mp4 HTTP/1.1" 206 Partial Content
-INFO:     10.0.0.2:34372 - "GET / HTTP/1.1" 307 Temporary Redirect
-INFO:     10.0.0.2:34374 - "GET /login HTTP/1.1" 200 OK
-INFO:     10.0.0.2:34388 - "GET /static/icons/favicon.webp HTTP/1.1" 200 OK
-WARNING:  Invalid HTTP request received.
-WARNING:  Invalid HTTP request received.
-INFO:     10.0.0.2:42244 - "GET / HTTP/1.1" 401 Unauthorized
-INFO:     10.0.0.2:42248 - "GET /login HTTP/1.1" 200 OK
-INFO:     10.0.1.4:35854 - "GET / HTTP/1.1" 401 Unauthorized
-INFO:     10.0.1.4:35854 - "GET / HTTP/1.1" 401 Unauthorized
-INFO:     10.0.0.2:47186 - "GET / HTTP/1.1" 401 Unauthorized
-WARNING:  Invalid HTTP request received.
-INFO:     10.0.0.2:59156 - "GET / HTTP/1.1" 401 Unauthorized
-WARNING:  Invalid HTTP request received.
-WARNING:  Invalid HTTP request received.
-INFO:     10.0.0.2:12936 - "GET / HTTP/1.1" 401 Unauthorized
-INFO:     10.0.0.2:46221 - "GET http%3A//api.ipify.org/?format=json HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:28593 - "CONNECT www.shadowserver.org%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:64252 - "GET / HTTP/1.1" 401 Unauthorized
-INFO:     10.0.0.2:51546 - "CONNECT api.ipify.org%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:53528 - "CONNECT api.ipify.org%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:53530 - "CONNECT api.ipify.org%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:53538 - "CONNECT api.ipify.org%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:53550 - "CONNECT api.ipify.org%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:53554 - "CONNECT api.ipify.org%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:53562 - "CONNECT api.ipify.org%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:53578 - "CONNECT api.ipify.org%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.0.2:42128 - "CONNECT api.ipify.org%3A443 HTTP/1.1" 404 Not Found
-INFO:     10.0.1.4:52540 - "GET /robots.txt HTTP/1.1" 404 Not Found
-INFO:     10.0.1.4:52540 - "GET / HTTP/1.1" 401 Unauthorized
+Uncaught TypeError: crypto.randomUUID is not a function
+    at jcSWP.~utils/extension-store (seed-guardian.ff2dbca9.js:1:1660)
+    at f (seed-guardian.ff2dbca9.js:1:705)
+    at jcSWP.~utils/extension-store (seed-guardian.ff2dbca9.js:1:1090)
+    at seed-guardian.ff2dbca9.js:1:1253
+jcSWP.~utils/extension-store @ seed-guardian.ff2dbca9.js:1
+f @ seed-guardian.ff2dbca9.js:1
+jcSWP.~utils/extension-store @ seed-guardian.ff2dbca9.js:1
+(anónimo) @ seed-guardian.ff2dbca9.js:1Entender este error
+recepcion.html:85 WebSocket connection to 'ws://localhost:8000/ws/recepcion' failed: 
+connectWebSocket @ recepcion.html:85
+sendToOdontologo @ recepcion.html:146
+onclick @ recepcion.html:66Entender este error
+recepcion.html:105 Error en WebSocket: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+wsRecepcion.onerror @ recepcion.html:105Entender este error
+recepcion.html:99 Conexión WebSocket para Recepción cerrada
+recepcion.html:85 WebSocket connection to 'ws://localhost:8000/ws/recepcion' failed: 
+connectWebSocket @ recepcion.html:85
+sendToOdontologo @ recepcion.html:146
+onclick @ recepcion.html:66Entender este error
+recepcion.html:105 Error en WebSocket: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+wsRecepcion.onerror @ recepcion.html:105Entender este error
+recepcion.html:99 Conexión WebSocket para Recepción cerrada
+recepcion.html:85 WebSocket connection to 'ws://localhost:8000/ws/recepcion' failed: 
+connectWebSocket @ recepcion.html:85
+sendToOdontologo @ recepcion.html:146
+onclick @ recepcion.html:67Entender este error
+recepcion.html:105 Error en WebSocket: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+wsRecepcion.onerror @ recepcion.html:105Entender este error
+recepcion.html:99 Conexión WebSocket para Recepción cerrada
 # WebSocket Communication System - Readme
 
 ## Overview

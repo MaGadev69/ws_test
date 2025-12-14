@@ -86,7 +86,10 @@
                 return; // Ya está conectado
             }
 
-            wsOdontologo = new WebSocket('ws://localhost:8000/ws/odontologo');
+            // Usar la URL del servidor actual (funciona tanto en local como en producción)
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws/odontologo`;
+            wsOdontologo = new WebSocket(wsUrl);
             isDisconnected = false;
 
             wsOdontologo.onopen = function(event) {
