@@ -1,22 +1,44 @@
 """
 Servidor WebSocket para comunicación entre recepción y odontólogo.
-Ejemplo mínimo para probar la funcionalidad de notificación.
+Optimizado para Dokploy.
 """
 import asyncio
 import json
+import os
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, List
 
 
 app = FastAPI()
+
+# CORS para producción
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Ajusta según tu dominio en producción
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Servir archivos estáticos
 app.mount("/static", StaticFiles(directory="."), name="static")
 
 # Almacenar mensajes pendientes
 pending_messages = {"recepcion": [], "odontologo": []}
+
+
+# Health check para Dokploy
+@app.get("/health")
+async def health_check():
+    return {"status": "ok", "service": "websocket"}
+
+
+@app.get("/")
+async def root():
+    return {"message": "WebSocket Server Running", "endpoints": ["/recepcion.html", "/odontologo.html"]}
 
 
 @app.get("/recepcion.html")
@@ -95,16 +117,17 @@ manager = ConnectionManager()
 @app.websocket("/ws/{client_type}")
 async def websocket_endpoint(websocket: WebSocket, client_type: str):
     if client_type not in ["recepcion", "odontologo"]:
-        await websocket.close(code=1008)  # HTTP 400 equivalent
+        await websocket.close(code=1008)
         return
 
     await manager.connect(websocket, client_type)
+    print(f"Cliente {client_type} conectado")
 
     try:
         while True:
             try:
-                # Recibir datos con timeout de 10 segundos
-                data = await asyncio.wait_for(websocket.receive_text(), timeout=10.0)
+                # Timeout más largo para producción (60 segundos)
+                data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 message_data = json.loads(data)
 
                 # Retransmitir el mensaje al otro panel
@@ -114,17 +137,23 @@ async def websocket_endpoint(websocket: WebSocket, client_type: str):
                     await manager.broadcast_to_recepcion(data)
 
             except asyncio.TimeoutError:
-                # Si no hay actividad en 10 segundos, se cierra la conexión
-                await websocket.close(code=1000)  # Código 1000: cierre normal
-                break
+                # Enviar ping para mantener la conexión viva
+                try:
+                    await websocket.send_text(json.dumps({"type": "ping"}))
+                except:
+                    break
 
     except WebSocketDisconnect:
-        pass  # Ya se maneja el cierre arriba
+        pass
+    except Exception as e:
+        print(f"Error en WebSocket: {e}")
     finally:
         manager.disconnect(websocket, client_type)
-        print(f"Cliente {client_type} desconectado (timeout o cierre normal)")
+        print(f"Cliente {client_type} desconectado")
 
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8001, reload=True)
+    # Usar variable de entorno PORT si existe (para Dokploy)
+    port = int(os.getenv("PORT", 8001))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)

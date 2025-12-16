@@ -1,33 +1,5 @@
-Uncaught TypeError: crypto.randomUUID is not a function
-    at jcSWP.~utils/extension-store (seed-guardian.ff2dbca9.js:1:1660)
-    at f (seed-guardian.ff2dbca9.js:1:705)
-    at jcSWP.~utils/extension-store (seed-guardian.ff2dbca9.js:1:1090)
-    at seed-guardian.ff2dbca9.js:1:1253
-jcSWP.~utils/extension-store @ seed-guardian.ff2dbca9.js:1
-f @ seed-guardian.ff2dbca9.js:1
-jcSWP.~utils/extension-store @ seed-guardian.ff2dbca9.js:1
-(anónimo) @ seed-guardian.ff2dbca9.js:1Entender este error
-recepcion.html:85 WebSocket connection to 'ws://localhost:8000/ws/recepcion' failed: 
-connectWebSocket @ recepcion.html:85
-sendToOdontologo @ recepcion.html:146
-onclick @ recepcion.html:66Entender este error
-recepcion.html:105 Error en WebSocket: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
-wsRecepcion.onerror @ recepcion.html:105Entender este error
-recepcion.html:99 Conexión WebSocket para Recepción cerrada
-recepcion.html:85 WebSocket connection to 'ws://localhost:8000/ws/recepcion' failed: 
-connectWebSocket @ recepcion.html:85
-sendToOdontologo @ recepcion.html:146
-onclick @ recepcion.html:66Entender este error
-recepcion.html:105 Error en WebSocket: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
-wsRecepcion.onerror @ recepcion.html:105Entender este error
-recepcion.html:99 Conexión WebSocket para Recepción cerrada
-recepcion.html:85 WebSocket connection to 'ws://localhost:8000/ws/recepcion' failed: 
-connectWebSocket @ recepcion.html:85
-sendToOdontologo @ recepcion.html:146
-onclick @ recepcion.html:67Entender este error
-recepcion.html:105 Error en WebSocket: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
-wsRecepcion.onerror @ recepcion.html:105Entender este error
-recepcion.html:99 Conexión WebSocket para Recepción cerrada
+https://claude.ai/chat/d86a4691-d266-4ffa-9cfd-c2c1a4a01df8
+
 # WebSocket Communication System - Readme
 
 ## Overview

@@ -4,7 +4,28 @@ services:
   websocket-app:
     build: .
     ports:
-      - "8001:8001"
+      - "${PORT:-8001}:8001"
     restart: unless-stopped
     environment:
       - ENVIRONMENT=production
+    labels:
+      # Habilitar Traefik
+      - "traefik.enable=true"
+      
+      # Configuración HTTP
+      - "traefik.http.routers.websocket-app.rule=Host(`tu-dominio.com`)"
+      - "traefik.http.routers.websocket-app.entrypoints=websecure"
+      - "traefik.http.routers.websocket-app.tls.certresolver=letsencrypt"
+      
+      # Configuración del servicio
+      - "traefik.http.services.websocket-app.loadbalancer.server.port=8001"
+      
+      # CRÍTICO: Headers para WebSocket
+      - "traefik.http.middlewares.websocket-headers.headers.customrequestheaders.Upgrade=websocket"
+      - "traefik.http.middlewares.websocket-headers.headers.customrequestheaders.Connection=Upgrade"
+      
+      # Aplicar middleware
+      - "traefik.http.routers.websocket-app.middlewares=websocket-headers"
+      
+      # Timeouts extendidos para WebSocket (opcional pero recomendado)
+      - "traefik.http.services.websocket-app.loadbalancer.responseforwarding.flushinterval=1s"
