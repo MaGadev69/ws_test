@@ -55,11 +55,31 @@
             border-radius: 4px;
             margin: 10px 0;
         }
+        .connection-status {
+            padding: 5px 10px;
+            border-radius: 3px;
+            display: inline-block;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        .status-connected {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .status-disconnected {
+            background-color: #f44336;
+            color: white;
+        }
+        .status-connecting {
+            background-color: #FF9800;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Panel de Recepción</h1>
+        <div id="connectionStatus" class="connection-status status-connecting">Conectando...</div>
         
         <div class="panel">
             <h2>Acciones</h2>
@@ -75,42 +95,91 @@
 
     <script>
         let wsRecepcion = null;
-        let isDisconnected = true;
+        let reconnectTimeout = null;
+
+        function updateConnectionStatus(status) {
+            const statusDiv = document.getElementById('connectionStatus');
+            statusDiv.className = 'connection-status';
+            
+            if (status === 'connected') {
+                statusDiv.classList.add('status-connected');
+                statusDiv.textContent = '✓ Conectado';
+            } else if (status === 'disconnected') {
+                statusDiv.classList.add('status-disconnected');
+                statusDiv.textContent = '✗ Desconectado';
+            } else if (status === 'connecting') {
+                statusDiv.classList.add('status-connecting');
+                statusDiv.textContent = '⟳ Conectando...';
+            }
+        }
 
         function connectWebSocket() {
             if (wsRecepcion && wsRecepcion.readyState === WebSocket.OPEN) {
-                return; // Ya está conectado
+                return;
             }
 
-            // Usar la URL del servidor actual (funciona tanto en local como en producción)
+            updateConnectionStatus('connecting');
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wsUrl = `${protocol}//${window.location.host}/ws/recepcion`;
             wsRecepcion = new WebSocket(wsUrl);
-            isDisconnected = false;
 
             wsRecepcion.onopen = function(event) {
-                console.log('Conexión WebSocket para Recepción abierta');
+                console.log('✅ Conexión WebSocket para Recepción abierta');
+                updateConnectionStatus('connected');
                 addMessage('Sistema', 'Conexión establecida', 'system');
+                
+                // Limpiar cualquier timeout de reconexión
+                if (reconnectTimeout) {
+                    clearTimeout(reconnectTimeout);
+                    reconnectTimeout = null;
+                }
             };
 
             wsRecepcion.onmessage = function(event) {
-                const messageData = JSON.parse(event.data);
-                addMessage(messageData.type, messageData.message, messageData.from);
+                try {
+                    const messageData = JSON.parse(event.data);
+                    
+                    // FILTRAR mensajes de ping/pong - NO mostrarlos
+                    if (messageData.type === 'ping') {
+                        console.log('📡 Ping recibido del servidor');
+                        // Responder con pong (opcional)
+                        if (wsRecepcion.readyState === WebSocket.OPEN) {
+                            wsRecepcion.send(JSON.stringify({ type: 'pong' }));
+                        }
+                        return; // No mostrar en UI
+                    }
+                    
+                    if (messageData.type === 'pong') {
+                        console.log('📡 Pong recibido del servidor');
+                        return; // No mostrar en UI
+                    }
+                    
+                    // Mostrar solo mensajes normales
+                    addMessage(messageData.type, messageData.message, messageData.from);
+                    
+                } catch (error) {
+                    console.error('Error al procesar mensaje:', error);
+                }
             };
 
             wsRecepcion.onclose = function(event) {
-                console.log('Conexión WebSocket para Recepción cerrada');
-                addMessage('Sistema', 'Conexión cerrada (timeout o error)', 'system');
-                isDisconnected = true;
+                console.log('🔌 Conexión WebSocket para Recepción cerrada');
+                updateConnectionStatus('disconnected');
+                addMessage('Sistema', 'Conexión cerrada - Reconectando...', 'system');
+                
+                // Reconectar después de 3 segundos
+                reconnectTimeout = setTimeout(() => {
+                    console.log('🔄 Intentando reconectar...');
+                    connectWebSocket();
+                }, 3000);
             };
 
             wsRecepcion.onerror = function(event) {
-                console.error('Error en WebSocket:', event);
-                isDisconnected = true;
+                console.error('❌ Error en WebSocket:', event);
+                updateConnectionStatus('disconnected');
             };
         }
 
-        // Funciones para enviar mensajes
         function sendToOdontologo(message) {
             if (wsRecepcion && wsRecepcion.readyState === WebSocket.OPEN) {
                 try {
@@ -123,34 +192,18 @@
                     wsRecepcion.send(JSON.stringify(messageData));
                     addMessage('Yo', message, 'sent');
                 } catch (e) {
+                    console.error('Error al enviar:', e);
                     addMessage('Sistema', 'Error al enviar, reconectando...', 'error');
                     connectWebSocket();
-                    // Intentar enviar nuevamente después de la reconexión
-                    setTimeout(() => {
-                        if (wsRecepcion && wsRecepcion.readyState === WebSocket.OPEN) {
-                            const messageData = {
-                                type: "notificacion",
-                                message: message,
-                                from: "recepcion",
-                                to: "odontologo"
-                            };
-                            wsRecepcion.send(JSON.stringify(messageData));
-                            addMessage('Yo', message, 'sent');
-                        } else {
-                            // Si no se puede reconectar inmediatamente, reconectar al enviar
-                            addMessage('Sistema', 'No se pudo conectar, reconexión pendiente...', 'error');
-                            // Intentar reconectar la próxima vez que se envíe un mensaje
-                            isDisconnected = true;
-                        }
-                    }, 100);
                 }
             } else {
-                addMessage('Sistema', 'No conectado, reconectando...', 'error');
+                addMessage('Sistema', 'No conectado. Mensaje guardado, conectando...', 'error');
                 connectWebSocket();
-                // Esperar hasta que se establezca la conexión
-                const checkConnection = setInterval(() => {
+                
+                // Reintentar envío después de conectar
+                const retryInterval = setInterval(() => {
                     if (wsRecepcion && wsRecepcion.readyState === WebSocket.OPEN) {
-                        clearInterval(checkConnection);
+                        clearInterval(retryInterval);
                         const messageData = {
                             type: "notificacion",
                             message: message,
@@ -158,14 +211,12 @@
                             to: "odontologo"
                         };
                         wsRecepcion.send(JSON.stringify(messageData));
-                        addMessage('Yo', message, 'sent');
+                        addMessage('Yo', message + ' (reenviado)', 'sent');
                     }
-                }, 50); // Verificar cada 50ms si se conectó
-
-                // Timeout por si acaso
-                setTimeout(() => {
-                    clearInterval(checkConnection);
-                }, 2000); // Máximo 2 segundos esperando
+                }, 500);
+                
+                // Timeout de 5 segundos
+                setTimeout(() => clearInterval(retryInterval), 5000);
             }
         }
 
@@ -180,6 +231,21 @@
             messagesDiv.appendChild(messageDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
+
+        // Conectar al cargar la página
+        window.onload = function() {
+            connectWebSocket();
+        };
+
+        // Reconectar si se recupera la conexión de internet
+        window.addEventListener('online', function() {
+            addMessage('Sistema', 'Conexión de internet restaurada', 'system');
+            connectWebSocket();
+        });
+
+        window.addEventListener('offline', function() {
+            addMessage('Sistema', 'Sin conexión de internet', 'error');
+        });
     </script>
 </body>
 </html>
