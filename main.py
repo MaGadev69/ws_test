@@ -63,10 +63,28 @@ odontologo_connections: List[WebSocket] = []
 class ConnectionManager:
     def __init__(self):
         self.active_connections: Dict[str, WebSocket] = {}
+        # Limit one connection per client type per server instance
+        self.client_type_connections: Dict[str, WebSocket] = {}  # "recepcion" -> WebSocket, "odontologo" -> WebSocket
 
     async def connect(self, websocket: WebSocket, client_type: str):
         await websocket.accept()
+
+        # Check if there's already a connection for this client type
+        # If so, remove the old connection to prevent duplicates
+        if client_type in self.client_type_connections:
+            old_connection = self.client_type_connections[client_type]
+            # Try to close the old connection gracefully
+            try:
+                await old_connection.close(code=1000)  # Normal closure
+            except:
+                pass  # Connection might already be closed
+
+        # Store the new connection
+        self.client_type_connections[client_type] = websocket
+
         if client_type == "recepcion":
+            # Remove any existing recepcion connections in the list
+            recepcion_connections.clear()
             recepcion_connections.append(websocket)
             # Enviar mensajes pendientes para recepción
             for msg in pending_messages["recepcion"]:
@@ -74,6 +92,8 @@ class ConnectionManager:
             # Limpiar mensajes pendientes
             pending_messages["recepcion"].clear()
         elif client_type == "odontologo":
+            # Remove any existing odontologo connections in the list
+            odontologo_connections.clear()
             odontologo_connections.append(websocket)
             # Enviar mensajes pendientes para odontólogo
             for msg in pending_messages["odontologo"]:
@@ -82,6 +102,10 @@ class ConnectionManager:
             pending_messages["odontologo"].clear()
 
     def disconnect(self, websocket: WebSocket, client_type: str):
+        # Remove from client type mapping if it matches
+        if client_type in self.client_type_connections and self.client_type_connections[client_type] == websocket:
+            del self.client_type_connections[client_type]
+
         if client_type == "recepcion" and websocket in recepcion_connections:
             recepcion_connections.remove(websocket)
         elif client_type == "odontologo" and websocket in odontologo_connections:
